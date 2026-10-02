@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "Step-by-step TDD microservices mastering Kafka, RabbitMQ, BullMQ, Postgres, and Redis",
+  "type": "module",
   "workspaces": [
     "packages/*",
     "services/*"
@@ -13,12 +14,18 @@
     "build": "tsc -b"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^22.13.0",
+    "@types/supertest": "^7.2.1",
+    "supertest": "^7.3.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
     "vitest": "^3.0.4"
   },
   "dependencies": {
-    "dotenv": "^16.4.7"
-  }
+    "dotenv": "^16.4.7",
+    "express": "^5.2.1"
+  },
+  "//workspaces": "Workspaces enable monorepo management: 'packages/*' holds shared libraries (e.g. @messaging/shared), 'services/*' holds runnable microservices (api-gateway, order-service, payment-service). npm links them locally via symlinks without publishing to npm registry.",
+  "//hoisting": "Workspaces use hoisting: dependencies in sub-packages (like amqplib, pg, ioredis) are lifted and installed into the single root node_modules/ folder to save disk space and avoid duplicate downloads, while local packages (@messaging/shared) are connected via symlinks."
 }
