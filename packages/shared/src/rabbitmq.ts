@@ -6,6 +6,13 @@ export class RabbitMQClient {
   private channel: amqp.Channel | null = null;
   private readonly url: string;
 
+  private getChannel(): amqp.Channel {
+    if (!this.channel) {
+      throw new Error('RabbitMQ channel is not initialized. Call connect() first.');
+    }
+    return this.channel;
+  }
+
   constructor(url?: string) {
     this.url = url || config.rabbitmq.url;
   }
@@ -28,20 +35,14 @@ export class RabbitMQClient {
     type: 'direct' | 'topic' | 'fanout' | 'headers' = 'direct',
     options?: amqp.Options.AssertExchange
   ): Promise<amqp.Replies.AssertExchange> {
-    if (!this.channel) {
-      throw new Error('RabbitMQ channel is not initialized. Call connect() first.');
-    }
-    return this.channel.assertExchange(exchange, type, options);
+    return this.getChannel().assertExchange(exchange, type, options);
   }
 
   async assertQueue(
     queue: string,
     options?: amqp.Options.AssertQueue
   ): Promise<amqp.Replies.AssertQueue> {
-    if (!this.channel) {
-      throw new Error('RabbitMQ channel is not initialized. Call connect() first.');
-    }
-    return this.channel.assertQueue(queue, options);
+    return this.getChannel().assertQueue(queue, options);
   }
 
   async bindQueue(
@@ -50,10 +51,7 @@ export class RabbitMQClient {
     routingKey: string,
     args?: any
   ): Promise<amqp.Replies.Empty> {
-    if (!this.channel) {
-      throw new Error('RabbitMQ channel is not initialized. Call connect() first.');
-    }
-    return this.channel.bindQueue(queue, exchange, routingKey, args);
+    return this.getChannel().bindQueue(queue, exchange, routingKey, args);
   }
 
   publish(
@@ -62,10 +60,23 @@ export class RabbitMQClient {
     content: Buffer,
     options?: amqp.Options.Publish
   ): boolean {
-    if (!this.channel) {
-      throw new Error('RabbitMQ channel is not initialized. Call connect() first.');
-    }
-    return this.channel.publish(exchange, routingKey, content, options);
+    return this.getChannel().publish(exchange, routingKey, content, options);
+  }
+
+  async consume(
+    queue: string,
+    onMessage: (msg: amqp.ConsumeMessage | null) => void,
+    options?: amqp.Options.Consume
+  ): Promise<amqp.Replies.Consume> {
+    return this.getChannel().consume(queue, onMessage, options);
+  }
+
+  ack(message: amqp.Message, allUpTo?: boolean): void {
+    this.getChannel().ack(message, allUpTo);
+  }
+
+  nack(message: amqp.Message, allUpTo?: boolean, requeue?: boolean): void {
+    this.getChannel().nack(message, allUpTo, requeue);
   }
 
   async close(): Promise<void> {

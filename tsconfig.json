@@ -15,5 +15,6 @@
     "paths": {
       "@messaging/shared": ["packages/shared/src/index.ts"]
     }
-  }
+  },
+  "include": ["packages/**/*", "services/**/*", "tests/**/*"]
 }
