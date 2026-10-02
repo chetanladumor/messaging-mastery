@@ -1,0 +1,24 @@
+{
+  "name": "messaging-mastery",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Step-by-step TDD microservices mastering Kafka, RabbitMQ, BullMQ, Postgres, and Redis",
+  "workspaces": [
+    "packages/*",
+    "services/*"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build": "tsc -b"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.4"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  }
+}
