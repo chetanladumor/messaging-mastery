@@ -3,3 +3,4 @@ export * from './connectivity.js';
 export * from './rabbitmq.js';
 export * from './types.js';
 export * from './database.js';
+export * from './redis.js';
