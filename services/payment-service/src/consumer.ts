@@ -6,8 +6,21 @@ export async function getPaymentConsumerClient(): Promise<RabbitMQClient> {
   if (!client) {
     client = new RabbitMQClient();
     await client.connect();
+
+    // 1. Assert Dead Letter Exchange (DLX) & Dead Letter Queue (DLQ)
+    await client.assertExchange(EXCHANGES.ORDERS_DLX, 'direct', { durable: true });
+    await client.assertQueue(QUEUES.PAYMENT_ORDERS_DLQ, { durable: true });
+    await client.bindQueue(QUEUES.PAYMENT_ORDERS_DLQ, EXCHANGES.ORDERS_DLX, ROUTING_KEYS.ORDER_DLQ);
+
+    // 2. Assert Primary Exchange & Queue with DLX configuration
     await client.assertExchange(EXCHANGES.ORDERS, 'direct', { durable: true });
-    await client.assertQueue(QUEUES.PAYMENT_ORDERS, { durable: true });
+    await client.assertQueue(QUEUES.PAYMENT_ORDERS, {
+      durable: true,
+      arguments: {
+        'x-dead-letter-exchange': EXCHANGES.ORDERS_DLX,
+        'x-dead-letter-routing-key': ROUTING_KEYS.ORDER_DLQ
+      }
+    });
     await client.bindQueue(QUEUES.PAYMENT_ORDERS, EXCHANGES.ORDERS, ROUTING_KEYS.ORDER_CREATED);
   }
   return client;

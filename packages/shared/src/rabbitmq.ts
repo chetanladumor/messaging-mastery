@@ -79,6 +79,14 @@ export class RabbitMQClient {
     this.getChannel().nack(message, allUpTo, requeue);
   }
 
+  async purgeQueue(queue: string): Promise<amqp.Replies.PurgeQueue> {
+    return this.getChannel().purgeQueue(queue);
+  }
+
+  async deleteQueue(queue: string, options?: amqp.Options.DeleteQueue): Promise<amqp.Replies.DeleteQueue> {
+    return this.getChannel().deleteQueue(queue, options);
+  }
+
   async close(): Promise<void> {
     if (this.channel) {
       await this.channel.close();
