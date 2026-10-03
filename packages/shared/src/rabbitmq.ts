@@ -87,6 +87,10 @@ export class RabbitMQClient {
     return this.getChannel().deleteQueue(queue, options);
   }
 
+  async setPrefetch(count: number, global?: boolean): Promise<void> {
+    await this.getChannel().prefetch(count, global);
+  }
+
   async close(): Promise<void> {
     if (this.channel) {
       await this.channel.close();

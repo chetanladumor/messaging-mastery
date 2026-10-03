@@ -25,7 +25,13 @@ describe('Step 9: RabbitMQ Advanced Finale (Pub/Sub Broadcast, QoS, and Retry TT
     await client.assertExchange(EXCHANGES.ORDERS_BROADCAST, 'fanout', { durable: true });
 
     // 2. Declare 3 independent service queues
-    await client.assertQueue(QUEUES.PAYMENT_ORDERS, { durable: true });
+    await client.assertQueue(QUEUES.PAYMENT_ORDERS, {
+      durable: true,
+      arguments: {
+        'x-dead-letter-exchange': EXCHANGES.ORDERS_DLX,
+        'x-dead-letter-routing-key': ROUTING_KEYS.ORDER_DLQ
+      }
+    });
     await client.assertQueue(QUEUES.INVENTORY_ORDERS, { durable: true });
     await client.assertQueue(QUEUES.NOTIFICATION_ORDERS, { durable: true });
 

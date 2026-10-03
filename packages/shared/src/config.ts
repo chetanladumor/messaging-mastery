@@ -24,5 +24,7 @@ export const config = {
     gateway: parseInt(process.env.GATEWAY_PORT || '3000', 10),
     orderService: parseInt(process.env.ORDER_SERVICE_PORT || '3001', 10),
     paymentService: parseInt(process.env.PAYMENT_SERVICE_PORT || '3002', 10),
+    inventoryService: parseInt(process.env.INVENTORY_SERVICE_PORT || '3003', 10),
+    notificationService: parseInt(process.env.NOTIFICATION_SERVICE_PORT || '3004', 10),
   },
 };
